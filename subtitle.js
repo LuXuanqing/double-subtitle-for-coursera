@@ -1,41 +1,82 @@
-console.log('subtitle.js loaded')
-var subtitle = {
-    // div元素
-    el: null,
-    // 刷新div内的字幕
-    fill: function () {
-        now_text = document.querySelector('div.active').innerText
-        console.log(now_text)
-        subtitle.el.innerText = now_text
-    },
-    looper: null,
-    start: function () {
-        console.log('subtitle started')
-        this.el.style.visibility = 'visible'
-        this.looper = setInterval(this.fill, 800)
-    },
-    stop: function () {
-        this.el.style.visibility = 'hidden'
-        clearInterval(this.looper)
-    },
-    // 创建div元素并插入到页面中
-    init: function () {
-        var div = document.createElement('div')
-        div.style.cssText = "z-index:1000; color: white; text-align: center; width: 100%; background-color: rgba(0, 0, 0, 0.5); position: absolute; font-size: 20px; padding: 3px; bottom: 0px; left: 50%; transform: translateX(-50%);"
-        var videoContainer = document.querySelector('video').parentElement
-        videoContainer.appendChild(div)
-        this.el = div
+// alert('subtitle.js has been loaded')
+
+
+// 获取指定language的textTrack
+function getTrack(language) {
+    // 获取video
+    let vid = document.querySelector('video')
+    if (!vid) {
+        return false
+    }
+    // 获取所有字幕
+    tracks = vid.textTracks
+    if (tracks.length <= 0) {
+        return false
+    }
+    // 遍历所有字幕
+    for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i].language == language) {
+            return tracks[i]
+        }
+    }
+    return false
+}
+
+// 显示/隐藏 字幕
+function showSubtitle(track) {
+    track.mode = 'showing'
+}
+
+function hideSubtitle(track) {
+    track.mode = 'hidden'
+}
+
+function toggleSubtitle(track) {
+    if (track.mode == 'hidden') {
+        showSubtitle(track)
+    } else {
+        hideSubtitle(track)
     }
 }
+
+
+function go() {
+    if (document.querySelector('#second-subtitle')) {
+        alert('字幕已存在')
+        return false
+    }
+    // 获得简体中文字幕
+    let cn = getTrack('zh-CN')
+    
+    if (cn) {
+        // 创建按钮
+        let btn = document.createElement('div')
+        btn.setAttribute('class', 'c-video-control-btn vjs-control-content')
+        btn.setAttribute('id', 'second-subtitle')
+        btn.innerText = 'zh-CN'
+        // 创建按钮容器
+        let wrapper = document.createElement('div')
+        wrapper.setAttribute('class', 'c-video-control vjs-control')
+        // 把按钮插入容器中
+        wrapper.appendChild(btn)
+        // 把容器插入页面中
+        let controlBar = document.querySelector('.vjs-control-bar')
+        let subtitleControl = document.querySelector('.c-subtitles-control')
+        controlBar.insertBefore(wrapper, subtitleControl)
+        // 添加点击事件
+        btn.addEventListener('click', function () {
+            toggleSubtitle(cn)
+        })
+        alert('succeeded')
+    } else {
+        alert('no zh-CN')
+    }
+}
+setTimeout(go,8000)
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message == 'start') {
-        if (!subtitle.el) {
-            subtitle.init()
-        }
-        subtitle.start()
+        go()
         sendResponse('start')
-    } else if (message == 'stop') {
-        subtitle.stop()
-        sendResponse('stop')        
     }
 })
