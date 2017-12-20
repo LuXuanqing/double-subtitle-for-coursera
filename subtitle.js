@@ -1,17 +1,17 @@
-// alert('subtitle.js has been loaded')
-
-
-// 获取指定language的textTrack
+/**
+ * 获取指定语言的字幕
+ * @param {string} language 目标字幕的语言，如'zh-CN'
+ * @return {TextTrack} 
+ */
 function getTrack(language) {
-    // 获取video
     let vid = document.querySelector('video')
     if (!vid) {
-        return false
+        return null
     }
     // 获取所有字幕
     tracks = vid.textTracks
     if (tracks.length <= 0) {
-        return false
+        return null
     }
     // 遍历所有字幕
     for (let i = 0; i < tracks.length; i++) {
@@ -19,64 +19,69 @@ function getTrack(language) {
             return tracks[i]
         }
     }
-    return false
+    return null
 }
 
-// 显示/隐藏 字幕
-function showSubtitle(track) {
-    track.mode = 'showing'
+// 为TextTrack对象的原型添加显示/隐藏字幕方法
+window.TextTrack.prototype.show = function () {
+    this.mode = 'showing'
 }
-
-function hideSubtitle(track) {
-    track.mode = 'hidden'
+window.TextTrack.prototype.hide = function () {
+    this.mode = 'hidden'
 }
-
-function toggleSubtitle(track) {
-    if (track.mode == 'hidden') {
-        showSubtitle(track)
-    } else {
-        hideSubtitle(track)
+window.TextTrack.prototype.toggle = function () {
+    if (this.mode == 'showing') {
+        this.hide()
+    } else if (this.mode == 'hidden') {
+        this.show()
     }
 }
 
 
+/**
+ * 执行脚本，创建字幕按钮
+ */
 function go() {
+    // 在视频播放器上添加控制第二字幕的按钮
     if (document.querySelector('#second-subtitle')) {
-        alert('字幕已存在')
+        // 检查按钮是否已存在，避免重复创建
         return false
     }
-    // 获得简体中文字幕
+
+    // 创建按钮元素
+    let btn = document.createElement('div')
+    btn.setAttribute('class', 'c-video-control-btn vjs-control-content')
+    btn.setAttribute('id', 'second-subtitle')
+    // 创建按钮容器元素
+    let wrapper = document.createElement('div')
+    wrapper.setAttribute('class', 'c-video-control vjs-control')
+    // 把按钮插入容器中
+    wrapper.appendChild(btn)
+    // 把容器插入页面中
+    let controlBar = document.querySelector('.vjs-control-bar')
+    let subtitleControl = document.querySelector('.c-subtitles-control')
+    controlBar.insertBefore(wrapper, subtitleControl)
+
+    // 获取并显示字幕
     let cn = getTrack('zh-CN')
-    
+    cn.show()
+    // 根据中文字幕是否存在，改变按钮文案和绑定事件
     if (cn) {
-        // 创建按钮
-        let btn = document.createElement('div')
-        btn.setAttribute('class', 'c-video-control-btn vjs-control-content')
-        btn.setAttribute('id', 'second-subtitle')
         btn.innerText = 'zh-CN'
-        // 创建按钮容器
-        let wrapper = document.createElement('div')
-        wrapper.setAttribute('class', 'c-video-control vjs-control')
-        // 把按钮插入容器中
-        wrapper.appendChild(btn)
-        // 把容器插入页面中
-        let controlBar = document.querySelector('.vjs-control-bar')
-        let subtitleControl = document.querySelector('.c-subtitles-control')
-        controlBar.insertBefore(wrapper, subtitleControl)
-        // 添加点击事件
         btn.addEventListener('click', function () {
-            toggleSubtitle(cn)
+            cn.toggle()
         })
-        alert('succeeded')
     } else {
-        alert('no zh-CN')
+        btn.innerText = 'no CN'
     }
 }
-setTimeout(go,8000)
 
+// 监听browser action的操作
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message == 'start') {
         go()
         sendResponse('start')
+    } else if (message == 'test') {
+        alert('received')
     }
 })
