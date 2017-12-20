@@ -81,5 +81,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message == 'start') {
         go()
         sendResponse('start')
+    } else if (message == 'test') {
+        alert('received')
     }
 })
