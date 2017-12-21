@@ -2,8 +2,10 @@
     padding: 0;
     margin: 0;
 }
-button {
-    width: 220px;
-    height: 40px;
-    text-align: center;
+#app {
+    width: 160px;
+    height: 160px;
+}
+.lcontainer {
+    margin: 8px 16px;
 }

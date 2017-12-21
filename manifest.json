@@ -2,20 +2,19 @@
     "manifest_version": 2,
     "name": "Coursera双字幕",
     "description": "为coursera的视频添加第二字幕",
-    "version": "0.3",
+    "version": "1.0",
     "browser_action": {
         "default_icon": "icon.png",
-        "default_title": "开启/关闭coursera双字幕",
+        "default_title": "为coursera视频添加更多字幕",
         "default_popup": "popup.html"
     },
-    "content_scripts": [
-        {
-            "matches": [
-                "*://www.coursera.org/*"
-            ],
-            "js": [
-                "subtitle.js"
-            ]
-        }
-    ]
+    "content_scripts": [{
+        "matches": [
+            "*://www.coursera.org/*"
+        ],
+        "js": [
+            "subtitle.js"
+        ]
+    }],
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

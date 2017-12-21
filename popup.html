@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-    <link rel="stylesheet" href="style.css">
+
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval'">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <button id="go">manually execute the script</button>
-    <button id="test">test</button>
-    <script src="control.js"></script>
+    <div id="app">
+        <tlang v-for="track in tracks" v-bind:track="track" v-on:toggle-p="toggle(track)"></tlang>
+    </div>
+    <!-- load scripts -->
+    <script src="vue.js"></script>
+    <script src="popup.js"></script>
 </body>
+
 </html>
