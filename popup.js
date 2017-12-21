@@ -1,45 +1,62 @@
-/**
- * 发送信息到当前标签
- * @param {string} message 
- * @param {function} cb 
- */
-function send(message, cb) {
-    const query = {
-        active: true,
-        currentWindow: true
+Vue.component('tlang', {
+    // 在 JavaScript 中使用 camelCase
+    props: {
+        track: Object
+    },
+    template: '<div v-on:click="toggle"><input type="checkbox" v-model="isShowing(track)"> <label>{{track.label}}</label></div>',
+    methods: {
+        isShowing: function (track) {
+            return track.mode == 'showing'
+        },
+        toggle: function () {
+            this.$emit('toggle-p')
+        }
     }
-    chrome.tabs.query(query, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, message, function (res) {
-            console.log('Received response: ' + res)
-            cb(res)
-        })
-    })
-}
-
+})
 
 const app = new Vue({
     el: '#app',
     data: {
         message: 'Hello chrome!',
-        tracks: []
+        tracks: [],
+        test: {
+            label: 'unknow language',
+            mode: 'showing',
+            language: 'tstlang'
+        }
     },
     methods: {
         toggle: function (track) {
-            send(track.label, (res) => {
+            this.send(track.label, (res) => {
                 if (track.mode == 'showing') {
                     track.mode = 'hidden'
                 } else {
                     track.mode = 'showing'
                 }
-                // console.log(track)
+                console.log(track)
             })
-            
+        },
+        send: function (message, cb) {
+            let query = {
+                active: true,
+                currentWindow: true
+            }
+            chrome.tabs.query(query, function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, message, function (res) {
+                    console.log('Received response: ' + res)
+                    cb(res)
+                })
+            })
+        },
+        print: function (msg='ok') {
+            console.log(msg)
         }
     },
     created: function () {
-        send('getAllTracks', (res) => {
+        this.send('getAllTracks', (res) => {
             // console.log(JSON.parse(res))
             this.tracks = JSON.parse(res)
         })
     }
 })
+
