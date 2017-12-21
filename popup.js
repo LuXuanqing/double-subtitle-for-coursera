@@ -1,9 +1,8 @@
 Vue.component('tlang', {
-    // 在 JavaScript 中使用 camelCase
     props: {
         track: Object
     },
-    template: '<div v-on:click="toggle"><input type="checkbox" v-model="isShowing(track)"> <label>{{track.label}}</label></div>',
+    template: '<div class="lcontainer" v-on:click="toggle"><input type="checkbox" v-model="isShowing(track)"> <label>{{track.label}}</label></div>',
     methods: {
         isShowing: function (track) {
             return track.mode == 'showing'
@@ -18,12 +17,7 @@ const app = new Vue({
     el: '#app',
     data: {
         message: 'Hello chrome!',
-        tracks: [],
-        test: {
-            label: 'unknow language',
-            mode: 'showing',
-            language: 'tstlang'
-        }
+        tracks: []
     },
     methods: {
         toggle: function (track) {

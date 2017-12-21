@@ -8,7 +8,6 @@
 
 <body>
     <div id="app">
-        <h1> {{ message }}</h1>
         <tlang v-for="track in tracks" v-bind:track="track" v-on:toggle-p="toggle(track)"></tlang>
     </div>
     <!-- load scripts -->
