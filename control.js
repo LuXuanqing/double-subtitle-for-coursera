@@ -1,4 +1,3 @@
-// send message to current tab
 /**
  * 发送信息到当前标签
  * @param {string} message 
@@ -11,12 +10,12 @@ function send(message, cb) {
     }
     chrome.tabs.query(query, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, message, function(res) {
-            return res
+            cb(res)
         })
     })
 }
 
-// 打开popup页面后请求字幕数据
+// 打开popup页面后请求字幕数据，然后渲染到列表中
 window.onload = function () {
 
 }

@@ -1,21 +1,21 @@
 /**
  * 获取指定语言的字幕
- * @param {string} language 目标字幕的语言，如'zh-CN'
+ * @param {string} label 目标字幕的语言，如'zh-CN'
  * @return {TextTrack} 
  */
-function getTrack(language) {
+function getTrackByLabel(label) {
     let vid = document.querySelector('video')
     if (!vid) {
         return null
     }
     // 获取所有字幕
-    tracks = vid.textTracks
+    let tracks = vid.textTracks
     if (tracks.length <= 0) {
         return null
     }
     // 遍历所有字幕
     for (let i = 0; i < tracks.length; i++) {
-        if (tracks[i].language == language) {
+        if (tracks[i].label == label) {
             return tracks[i]
         }
     }
@@ -34,6 +34,11 @@ function getAllTracks() {
     }
     // 需要返回的结果
     let result = []
+    // 获取所有字幕
+    let tracks = vid.textTracks
+    if (tracks.length <= 0) {
+        return null
+    }
     // 遍历所有字幕
     for (let i = 0; i < tracks.length; i++) {
         let track = {
@@ -45,7 +50,6 @@ function getAllTracks() {
     return result
 }
 
-}
 
 // 为TextTrack对象的原型添加显示/隐藏字幕方法
 window.TextTrack.prototype.show = function () {
@@ -59,6 +63,7 @@ window.TextTrack.prototype.toggle = function () {
         this.hide()
     } else if (this.mode == 'hidden') {
         this.show()
+        console.log(this.label+': '+this.mode)
     }
 }
 
@@ -88,7 +93,7 @@ function go() {
     controlBar.insertBefore(wrapper, subtitleControl)
 
     // 获取并显示字幕
-    let cn = getTrack('zh-CN')
+    let cn = getTrackByLabel('zh-CN')
     cn.show()
     // 根据中文字幕是否存在，改变按钮文案和绑定事件
     if (cn) {
@@ -103,10 +108,21 @@ function go() {
 
 // 监听browser action的操作
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message == 'start') {
-        go()
-        sendResponse('start')
-    } else if (message == 'test') {
-        alert('received')
+    // if (message == 'start') {
+    //     go()
+    //     sendResponse('start')
+    // } else if (message == 'test') {
+    //     alert('received')
+    // }
+    console.log('Received message: ' + message)
+    switch (message) {
+        case 'getAllTracks':
+            let tracks = getAllTracks()
+            console.log(tracks)
+            sendResponse(JSON.stringify(tracks))
+            break
+        default:
+            let track = getTrackByLabel(message)
+            track.toggle()
     }
 })

@@ -10,11 +10,11 @@
     <div id="app">
         <h1> {{ message }}</h1>
         <ul>
-            <li v-for="t in tracks">{{ t.text }}</li>
+            <li v-for="t in tracks" v-on:click="toggle(t)">{{ t.label }} - {{ t.mode }}</li>
         </ul>
     </div>
     <script src="vue.js"></script>
-    <script src="control.js"></script>
+    <!-- <script src="control.js"></script> -->
     <script src="popup.js"></script>
 </body>
 
