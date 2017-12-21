@@ -22,6 +22,31 @@ function getTrack(language) {
     return null
 }
 
+
+/**
+ * 获取所有字幕，返回一个包含label和mode的数组
+ * @return {array}
+ */
+function getAllTracks() {
+    let vid = document.querySelector('video')
+    if (!vid) {
+        return null
+    }
+    // 需要返回的结果
+    let result = []
+    // 遍历所有字幕
+    for (let i = 0; i < tracks.length; i++) {
+        let track = {
+            label: tracks[i].label,
+            mode: tracks[i].mode
+        }
+        result.push(track)
+    }
+    return result
+}
+
+}
+
 // 为TextTrack对象的原型添加显示/隐藏字幕方法
 window.TextTrack.prototype.show = function () {
     this.mode = 'showing'

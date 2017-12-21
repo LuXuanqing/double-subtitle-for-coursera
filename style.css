@@ -2,8 +2,6 @@
     padding: 0;
     margin: 0;
 }
-button {
-    width: 220px;
-    height: 40px;
-    text-align: center;
+body {
+    width: 200px;
 }

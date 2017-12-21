@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-    <link rel="stylesheet" href="style.css">
+
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval'">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <button id="go">manually execute the script</button>
-    <button id="test">test</button>
+    <div id="app">
+        <h1> {{ message }}</h1>
+        <ul>
+            <li v-for="t in tracks">{{ t.text }}</li>
+        </ul>
+    </div>
+    <script src="vue.js"></script>
     <script src="control.js"></script>
+    <script src="popup.js"></script>
 </body>
+
 </html>
